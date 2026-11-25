@@ -1,6 +1,79 @@
-<mvc:View controllerName="project1.controller.Main"
+<mvc:View
+    controllerName="project1.controller.Main"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
+    xmlns="sap.m"
+>
+    <Page
+        id="mainPage"
+        title="{mainView>/title}"
+    >
+        <headerContent>
+            <Button
+                id="createProductBtn"
+                icon="sap-icon://add"
+                type="Emphasized"
+                tooltip="{i18n>createProductTooltip}"
+                press=".onCreatePress"
+            />
+        </headerContent>
+        <subHeader>
+            <OverflowToolbar id="searchToolbar">
+                <SearchField
+                    id="productSearchField"
+                    width="100%"
+                    placeholder="{i18n>searchPlaceholder}"
+                    search=".onSearch"
+                    liveChange=".onSearch"
+                />
+            </OverflowToolbar>
+        </subHeader>
+        <content>
+            <List
+                id="productList"
+                mode="SingleSelectMaster"
+                busyIndicatorDelay="0"
+                growing="true"
+                growingScrollToLoad="true"
+                noDataText="{i18n>noProductsText}"
+                selectionChange=".onSelectionChange"
+                updateFinished=".onListUpdateFinished"
+                items="{
+                    path: '/Products',
+                    sorter: {
+                        path: 'ID',
+                        descending: true
+                    }
+                }"
+            >
+                <ObjectListItem
+                    id="productListItem"
+                    title="{Name}"
+                    number="{
+                        path: 'Price',
+                        type: 'sap.ui.model.odata.type.Decimal',
+                        formatOptions: {
+                            minFractionDigits: 2,
+                            maxFractionDigits: 2
+                        }
+                    }"
+                    numberUnit="{i18n>currencyCode}"
+                >
+                    <firstStatus>
+                        <ObjectStatus
+                            id="productRatingStatus"
+                            title="{i18n>ratingLabel}"
+                            text="{Rating}"
+                            state="{= ${Rating} >= 4 ? 'Success' : (${Rating} >= 2 ? 'Warning' : 'Error') }"
+                        />
+                    </firstStatus>
+                    <attributes>
+                        <ObjectAttribute
+                            id="productDescriptionAttr"
+                            text="{Description}"
+                        />
+                    </attributes>
+                </ObjectListItem>
+            </List>
+        </content>
     </Page>
 </mvc:View>

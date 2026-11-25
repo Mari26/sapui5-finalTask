@@ -3,7 +3,11 @@
   "sap.app": {
     "id": "project1",
     "type": "application",
-    "i18n": "i18n/i18n.properties",
+    "i18n": {
+      "bundleUrl": "i18n/i18n.properties",
+      "supportedLocales": [""],
+      "fallbackLocale": ""
+    },
     "applicationVersion": {
       "version": "0.0.1"
     },
@@ -14,6 +18,16 @@
       "id": "@sap/generator-fiori:basic",
       "version": "1.32.0",
       "toolsId": "1b2455a7-663a-43aa-94cf-1e5f3af28b67"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/V2/OData/OData.svc/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "2.0",
+          "localUri": "localService/metadataV2.xml"
+        }
+      }
     }
   },
   "sap.ui": {
@@ -38,7 +52,10 @@
       "minUI5Version": "1.154.0",
       "libs": {
         "sap.m": {},
-        "sap.ui.core": {}
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.uxap": {},
+        "sap.ui.layout": {}
       }
     },
     "contentDensities": {
@@ -49,7 +66,18 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "project1.i18n.i18n"
+          "bundleName": "project1.i18n.i18n",
+          "supportedLocales": [""],
+          "fallbackLocale": ""
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "defaultBindingMode": "OneWay",
+          "defaultCountMode": "Inline",
+          "useBatch": true
         }
       }
     },
@@ -62,29 +90,49 @@
     },
     "routing": {
       "config": {
-        "routerClass": "sap.m.routing.Router",
-        "controlAggregation": "pages",
-        "controlId": "app",
-        "transition": "slide",
+        "routerClass": "sap.f.routing.Router",
         "type": "View",
         "viewType": "XML",
         "path": "project1.view",
-        "async": true,
-        "viewPath": "project1.view"
+        "controlId": "fcl",
+        "transition": "slide",
+        "async": true
       },
       "routes": [
         {
           "name": "RouteMain",
-          "pattern": ":?query:",
+          "pattern": "",
           "target": [
             "TargetMain"
+          ]
+        },
+        {
+          "name": "RouteCreate",
+          "pattern": "product/create",
+          "target": [
+            "TargetMain",
+            "TargetDetail"
+          ]
+        },
+        {
+          "name": "RouteDetail",
+          "pattern": "product/{productId}",
+          "target": [
+            "TargetMain",
+            "TargetDetail"
           ]
         }
       ],
       "targets": {
         "TargetMain": {
           "id": "Main",
-          "name": "Main"
+          "name": "Main",
+          "controlAggregation": "beginColumnPages"
+        },
+        "TargetDetail": {
+          "id": "Detail",
+          "name": "Detail",
+          "controlAggregation": "midColumnPages"
         }
       }
     },
