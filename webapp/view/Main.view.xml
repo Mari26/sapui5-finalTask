@@ -41,7 +41,7 @@
                     path: '/Products',
                     sorter: {
                         path: 'ID',
-                        descending: false
+                        descending: true
                     }
                 }"
             >

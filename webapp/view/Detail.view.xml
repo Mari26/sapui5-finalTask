@@ -2,8 +2,229 @@
     controllerName="project1.controller.Detail"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
 >
-    <Page id="detailPage" title="{i18n>detailPageTitle}">
-        <content />
+    <uxap:ObjectPageLayout
+        id="objectPageLayout"
+        visible="{= !${detailView>/notFound} }"
+        busy="{detailView>/busy}"
+        busyIndicatorDelay="0"
+        showTitleInHeaderContent="true"
+        upperCaseAnchorBar="false"
+    >
+        <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle id="objectPageHeaderTitle">
+                <uxap:expandedHeading>
+                    <Title
+                        id="expandedProductTitle"
+                        text="{= ${detailView>/isCreateMode} ? ${i18n>newProductTitle} : ${detailView>/draft/Name} }"
+                        wrapping="true"
+                    />
+                </uxap:expandedHeading>
+                <uxap:snappedHeading>
+                    <Title
+                        id="snappedProductTitle"
+                        text="{= ${detailView>/isCreateMode} ? ${i18n>newProductTitle} : ${detailView>/draft/Name} }"
+                        wrapping="true"
+                    />
+                </uxap:snappedHeading>
+                <uxap:actions>
+                    <Button
+                        id="editProductBtn"
+                        text="{i18n>editButtonText}"
+                        type="Emphasized"
+                        visible="{= !${detailView>/isEditMode} }"
+                        press=".onEditPress"
+                    />
+                    <Button
+                        id="deleteProductBtn"
+                        text="{i18n>deleteButtonText}"
+                        type="Transparent"
+                        visible="{= !${detailView>/isEditMode} }"
+                        press=".onDeletePress"
+                    />
+                    <Button
+                        id="saveProductBtn"
+                        text="{i18n>saveButtonText}"
+                        type="Emphasized"
+                        visible="{detailView>/isEditMode}"
+                        press=".onSavePress"
+                    />
+                    <Button
+                        id="cancelProductBtn"
+                        text="{i18n>cancelButtonText}"
+                        type="Transparent"
+                        visible="{detailView>/isEditMode}"
+                        press=".onCancelPress"
+                    />
+                    <Button
+                        id="closeDetailBtn"
+                        icon="sap-icon://decline"
+                        type="Transparent"
+                        tooltip="{i18n>closeTooltip}"
+                        press=".onClosePress"
+                    />
+                </uxap:actions>
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <uxap:headerContent>
+            <layout:HorizontalLayout
+                id="headerSummaryLayout"
+                allowWrapping="true"
+                visible="{= !${detailView>/isCreateMode} }"
+            >
+                <layout:VerticalLayout id="headerPriceBox" class="sapUiMediumMarginEnd">
+                    <Label id="headerPriceLabel" text="{i18n>priceLabel}" />
+                    <ObjectNumber
+                        id="headerPriceNumber"
+                        number="{detailView>/draft/Price}"
+                        unit="{i18n>currencyCode}"
+                    />
+                </layout:VerticalLayout>
+                <layout:VerticalLayout id="headerRatingBox">
+                    <Label id="headerRatingLabel" text="{i18n>ratingLabel}" />
+                    <ObjectStatus
+                        id="headerRatingStatus"
+                        text="{detailView>/draft/Rating}"
+                        state="{= Number(${detailView>/draft/Rating}) >= 4 ? 'Success' : (Number(${detailView>/draft/Rating}) >= 2 ? 'Warning' : 'Error') }"
+                    />
+                </layout:VerticalLayout>
+            </layout:HorizontalLayout>
+        </uxap:headerContent>
+
+        <uxap:sections>
+            <uxap:ObjectPageSection
+                id="generalInfoSection"
+                title="{i18n>generalInfoSectionTitle}"
+                titleUppercase="false"
+            >
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection id="generalInfoSubSection">
+                        <uxap:blocks>
+                            <form:SimpleForm
+                                id="productForm"
+                                layout="ColumnLayout"
+                                editable="{detailView>/isEditMode}"
+                                columnsM="2"
+                                columnsL="2"
+                                columnsXL="2"
+                            >
+                                <form:content>
+                                    <Label
+                                        id="nameLabel"
+                                        text="{i18n>nameLabel}"
+                                        labelFor="nameInput"
+                                        required="{detailView>/isEditMode}"
+                                    />
+                                    <Input
+                                        id="nameInput"
+                                        value="{detailView>/draft/Name}"
+                                        editable="{detailView>/isEditMode}"
+                                        valueState="{detailView>/validation/Name/state}"
+                                        valueStateText="{detailView>/validation/Name/text}"
+                                        liveChange=".onFieldChange"
+                                    />
+
+                                    <Label
+                                        id="descriptionLabel"
+                                        text="{i18n>descriptionLabel}"
+                                        labelFor="descriptionInput"
+                                    />
+                                    <TextArea
+                                        id="descriptionInput"
+                                        value="{detailView>/draft/Description}"
+                                        editable="{detailView>/isEditMode}"
+                                        rows="3"
+                                        growing="true"
+                                    />
+
+                                    <Label
+                                        id="priceLabel"
+                                        text="{i18n>priceLabel}"
+                                        labelFor="priceInput"
+                                        required="{detailView>/isEditMode}"
+                                    />
+                                    <Input
+                                        id="priceInput"
+                                        type="Number"
+                                        value="{detailView>/draft/Price}"
+                                        description="{i18n>currencyCode}"
+                                        editable="{detailView>/isEditMode}"
+                                        valueState="{detailView>/validation/Price/state}"
+                                        valueStateText="{detailView>/validation/Price/text}"
+                                        liveChange=".onFieldChange"
+                                    />
+
+                                    <Label
+                                        id="ratingLabel"
+                                        text="{i18n>ratingLabel}"
+                                        labelFor="ratingInput"
+                                        required="{detailView>/isEditMode}"
+                                    />
+                                    <Input
+                                        id="ratingInput"
+                                        type="Number"
+                                        value="{detailView>/draft/Rating}"
+                                        editable="{detailView>/isEditMode}"
+                                        valueState="{detailView>/validation/Rating/state}"
+                                        valueStateText="{detailView>/validation/Rating/text}"
+                                        liveChange=".onFieldChange"
+                                    />
+
+                                    <Label
+                                        id="releaseDateLabel"
+                                        text="{i18n>releaseDateLabel}"
+                                        labelFor="releaseDatePicker"
+                                        required="{detailView>/isEditMode}"
+                                    />
+                                    <DatePicker
+                                        id="releaseDatePicker"
+                                        dateValue="{detailView>/draft/ReleaseDate}"
+                                        editable="{detailView>/isEditMode}"
+                                        valueState="{detailView>/validation/ReleaseDate/state}"
+                                        valueStateText="{detailView>/validation/ReleaseDate/text}"
+                                        change=".onFieldChange"
+                                    />
+
+                                    <Label
+                                        id="discontinuedDateLabel"
+                                        text="{i18n>discontinuedDateLabel}"
+                                        labelFor="discontinuedDatePicker"
+                                    />
+                                    <DatePicker
+                                        id="discontinuedDatePicker"
+                                        dateValue="{detailView>/draft/DiscontinuedDate}"
+                                        editable="{detailView>/isEditMode}"
+                                        valueState="{detailView>/validation/DiscontinuedDate/state}"
+                                        valueStateText="{detailView>/validation/DiscontinuedDate/text}"
+                                        change=".onFieldChange"
+                                    />
+                                </form:content>
+                            </form:SimpleForm>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
+    </uxap:ObjectPageLayout>
+
+    <Page
+        id="notFoundPage"
+        visible="{detailView>/notFound}"
+        title="{i18n>detailPageTitle}"
+        showNavButton="true"
+        navButtonPress=".onClosePress"
+    >
+        <content>
+            <IllustratedMessage
+                id="notFoundIllustratedMessage"
+                illustrationType="sapIllus-PageNotFound"
+                title="{i18n>notFoundTitle}"
+                description="{i18n>notFoundText}"
+            />
+        </content>
     </Page>
 </mvc:View>
