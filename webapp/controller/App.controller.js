@@ -15,10 +15,10 @@ sap.ui.define([
             this.getOwnerComponent().setModel(oAppViewModel, "appView");
 
             this._oRouter = this.getOwnerComponent().getRouter();
-            this._oRouter.attachBeforeRouteMatched(this._onBeforeRouteMatched, this);
+            this._oRouter.attachRouteMatched(this._onRouteMatched, this);
         },
 
-        _onBeforeRouteMatched(oEvent) {
+        _onRouteMatched(oEvent) {
             const sRouteName = oEvent.getParameter("name");
             const oAppViewModel = this.getOwnerComponent().getModel("appView");
             const sLayout = sRouteName === "RouteMain"
@@ -30,7 +30,7 @@ sap.ui.define([
 
         onExit() {
             if (this._oRouter) {
-                this._oRouter.detachBeforeRouteMatched(this._onBeforeRouteMatched, this);
+                this._oRouter.detachRouteMatched(this._onRouteMatched, this);
             }
         }
     });
